@@ -38,6 +38,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 INSTALLED_APPS = [
     'sslserver',
     'corsheaders',
+    'celery',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -115,7 +116,7 @@ AUTHENTICATION_BACKENDS = (
 )
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+CELERY_TIMEZONE = 'Asia/Kolkata'
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Kolkata'

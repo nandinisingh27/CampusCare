@@ -16,7 +16,8 @@ urlpatterns = [
     path('list_roles/',views.list_roles),
     path('change_role/',views.change_role),
     path('assign_roles/',views.assign_roles),
-    
+    path('add_grievance/',views.add_grievance),
+    path('list_grievance/',views.list_grievance),
     
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
