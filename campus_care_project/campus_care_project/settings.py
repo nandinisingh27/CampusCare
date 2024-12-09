@@ -87,7 +87,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "Campuscare_db",
         "USER": "root",
-        "PASSWORD": "Nandini@2004",
+        "PASSWORD": "Nandini@2005",
         "HOST": "127.0.0.1",
         "PORT": "3306",
     }
@@ -116,7 +116,6 @@ AUTHENTICATION_BACKENDS = (
 )
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
-CELERY_TIMEZONE = 'Asia/Kolkata'
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Kolkata'
@@ -124,6 +123,12 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 
 USE_TZ = True
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0' 
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'Asia/Kolkata'
 
 
 # Static files (CSS, JavaScript, Images)

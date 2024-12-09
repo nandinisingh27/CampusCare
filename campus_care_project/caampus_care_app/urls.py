@@ -18,6 +18,11 @@ urlpatterns = [
     path('assign_roles/',views.assign_roles),
     path('add_grievance/',views.add_grievance),
     path('list_grievance/',views.list_grievance),
+    path('forward/',views.approve_grievance),
+    path('resolve/',views.reject_grievance),
+    path('grievance_history/',views.grievance_history),
+    path('all_grievance/',views.all_grievance),
+    path('stats/',views.stats),
     
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
