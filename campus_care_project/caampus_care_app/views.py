@@ -20,8 +20,7 @@ def faculty_register(request):
     if not user.is_authenticated:
         return JsonResponse({"error":"Unauthorized"},status =401)
     else:
-        user_det = User.objects.filter(username =user).values()
-        id =user_det[0]['id']
+        id = user.id
         user_role =UserRole.objects.filter(user_id =id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
         if role_id == 29:        
@@ -96,8 +95,7 @@ def student_register(request):
     if not user.is_authenticated:
         return JsonResponse({"error":"Unauthorized"},status =401)
     else:
-        user_det = User.objects.filter(username =user).values()
-        id =user_det[0]['id']
+        id = user.id
         user_role =UserRole.objects.filter(user_id =id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
         if role_id == 29:        
@@ -290,8 +288,8 @@ def profile_det(request):
         if not request.user.is_authenticated :
             return JsonResponse({"error":"Unauthorized"},status =401)
         user_det = User.objects.filter(username =user).values()
+        _id = user.id
         is_staff = user_det[0]['is_staff']
-        _id = user_det[0]['id']
         user_data= UserRole.objects.filter(user_id = _id).filter(is_active=True).values()
         role_id = user_data[0]['role_id']
         data = Dropdown.objects.filter(id = role_id).values()
@@ -350,8 +348,7 @@ def list_faculty(request):
         user = request.user
         if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-        user_det = User.objects.filter(username = user).values()
-        user_id = user_det[0]['id']
+        user_id = user.id
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
         if role_id == 28:
@@ -397,8 +394,7 @@ def list_roles(request):
     user = request.user
     if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-    user_det = User.objects.filter(username =user).values()
-    id= user_det[0]['id']
+    id= user.id
     roles_det = UserRole.objects.filter(user_id = id).filter(is_deleted = 0).values()
     
     roles =[]
@@ -419,13 +415,9 @@ def change_role(request):
         user = request.user
         if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-        user_det = User.objects.filter(username = user).values()
-        user_i = user_det[0]['id']
+        user_i = user.id
         data =json.loads(request.body)
         role_id = data.get('role')
-        user_det = UserRole.objects.filter(role_id = role_id).values()
-        user_id = user_det[0]['user_id']
-        user_=UserRole.objects.filter(role_id = role_id)
         user_det = UserRole.objects.filter(role_id = role_id).values()
         user_id = user_det[0]['user_id']
         user_=UserRole.objects.filter(role_id = role_id).filter(user_id = user_i).update(is_active=1)
@@ -448,8 +440,7 @@ def navbar(request):
         user = request.user
         if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-        user_det = User.objects.filter(username = user).values()
-        user_id = user_det[0]['id']
+        user_id = user.id
         role_det = UserRole.objects.filter(user_id = user_id).filter(is_active = True).values()
         role_id  = role_det[0]['role_id']
         user_det = User.objects.filter(username = user).values()
