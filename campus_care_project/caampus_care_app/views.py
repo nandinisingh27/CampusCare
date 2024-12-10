@@ -194,7 +194,7 @@ def role_type(user):
     role_info = UserRole.objects.filter(user_id =  user_id).filter(is_deleted =0).values_list()
     details =[]
     for i in role_info:
-        role_id= i[2]
+        role_id= i[4]
         role_det = Dropdown.objects.filter(id = role_id).values()
         role = role_det[0]['value']
         val = {
@@ -492,23 +492,28 @@ def assign_roles(request):
         user =request.user
         if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-        user_det =User.objects.filter(username =user).values()
-        user_id = user_det[0]['id']
+        user_id = user.id
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active =1).values()
-        rol = user_role[0]['role_id']
-        if rol == 28:
-                
-                data = json.loads(request.body)
-                role = data.get('role')
-                user_id = data.get('user_id')
-                UserRole.objects.create(user_id = user_id , role_id =role)
-                
-                return JsonResponse({'message':'Role added successfully'},status = 200)
+        role = user_role[0]['role_id']
+        role_DSW = Dropdown.objects.filter(key = "DSW").values()
+        rol = role_DSW[0]['id']
+        if role == rol:
+            data = json.loads(request.body)
+            role_added= int(data.get('role'))
+            det = Dropdown.objects.filter(key = "S").values()
+            id = det[0]['id']
+            if role_added == id:
+                return JsonResponse({'error':'Cannot assign student role to faculty'},status =400)
+            user_id = data.get('user_id')
+            user_det = Faculty.objects.filter(user_id =user_id).values()
+            gender = user_det[0]['gender']
+            print(gender)
+            UserRole.objects.create(user_id = user_id , role_id =role_added)            
+            return JsonResponse({'message':'Role added successfully'},status = 200)
         else:
             return JsonResponse({"error":"You are not allowed to access this page"},status=403)
     elif request.method == "PATCH":
         data  = json.loads(request.body)
-        print(data)
         user_d = data.get('user')
         role_id = data.get('role')   
         lst = UserRole.objects.filter(user_id = user_d).filter(role_id= role_id).update(is_deleted = 1)
@@ -1277,7 +1282,6 @@ def all_grievance(request):
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
                     stat = det['status_id']
-
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
@@ -1294,7 +1298,7 @@ def all_grievance(request):
                         message = "Pending"
                     val['message']  = message
                     details.append(val)
-            return JsonResponse({'data':details},status=200)
+                    return JsonResponse({'data':details},status=200)
         elif role ==44 or role == 48:
             user_hostel = Student.objects.filter(hostel_name ="CG").values()            
             for items in user_hostel:
@@ -1433,7 +1437,7 @@ def all_grievance(request):
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==29 or role ==23 or role ==28:
-            user_hostel = Student.objects.all().values()            
+            user_hostel = Student.objects.all().values()
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1448,7 +1452,6 @@ def all_grievance(request):
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
                     stat = det['status_id']
-
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
@@ -1778,3 +1781,9 @@ def stats(request):
             return JsonResponse({"data":details,"donut":chart_det},status=200)
     else:
         return JsonResponse({"error":"Invalid Method"},status = 405)
+    
+def list_roles_faculty(request):
+    if request.method == "GET":
+        pass
+    else:
+        return JsonResponse({"error":'Invalid Method'},status =405)
