@@ -47,6 +47,7 @@ class Navbar(BaseModel):
     position = models.IntegerField(default=0)
     icon = models.CharField(max_length=255)
     is_parent = models.BooleanField(default = False)
+    is_child =models.BooleanField(default=False)
     role = models.ForeignKey(Dropdown,on_delete = models.SET_NULL,null = True)
     
 class UserRole(BaseModel):

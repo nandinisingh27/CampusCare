@@ -23,7 +23,9 @@ def faculty_register(request):
         id = user.id
         user_role =UserRole.objects.filter(user_id =id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
-        if role_id == 29:        
+        det = Dropdown.objects.filter(key = "AD").values()
+        ad_id =det[0]['id']
+        if role_id == ad_id:        
             if request.method=="POST":
                 first_name = request.POST['first_name']
                 if first_name:
@@ -98,7 +100,9 @@ def student_register(request):
         id = user.id
         user_role =UserRole.objects.filter(user_id =id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
-        if role_id == 29:        
+        det = Dropdown.objects.filter(key = "AD").values()
+        ad_id =det[0]['id']
+        if role_id == ad_id:
             if request.method=="POST":
                 first_name = request.POST['first_name']
                 if  first_name:
@@ -167,6 +171,57 @@ def student_register(request):
         else:
             return JsonResponse({"error":'You are not allowed to access this page'},status=403)
 
+def role_id_fun():
+        detail= Dropdown.objects.filter(value='role').values()
+        role_id = detail[0]['id']
+        role_details = Dropdown.objects.filter(parent_id =role_id).values()
+        RS = role_details.filter(key = "R").values()
+        rs_id = RS[0]['id']
+        CRG = role_details.filter(key = "CRG").values()
+        crg_id  = CRG[0]['id']
+        WS = role_details.filter(key = "W").values()
+        ws_id = WS[0]['id']
+        WG =role_details.filter(key = "WG").values()
+        wg_id = WG[0]['id']
+        RG =role_details.filter(key = "RG").values()
+        rg_id = RG[0]['id']
+        WCV = role_details.filter(key = "WCV").values()
+        wcv_id = WCV[0]['id']
+        WCG = role_details.filter(key = "WCG").values()
+        wcg_id = WCG[0]['id']
+        RCG = role_details.filter(key = "RCG").values()
+        rcg_id = RCG[0]['id']
+        RCV = role_details.filter(key = "RCV").values()
+        rcv_id = RCV[0]['id']
+        CRB = role_details.filter(key = "CRB").values()
+        crb_id = CRB[0]['id']
+        DSW = role_details.filter(key = "DSW").values()
+        dsw_id = DSW[0]['id']
+        AO = role_details.filter(key = "AO").values()
+        ao_id = AO[0]['id']
+        AD = role_details.filter(key = "AD").values()
+        ad_id = AD[0]['id']
+        ST = role_details.filter(key = "S").values()
+        st_id = ST[0]['id']
+        val = {
+            'ws':ws_id,
+            'wg':wg_id,
+            'wcg':wcg_id,
+            'wcv':wcv_id,
+            'rs':rs_id,
+            'rg':rg_id,
+            'rcg':rcg_id,
+            'rcv':rcv_id,
+            'crg':crg_id,
+            'crb':crb_id,
+            'st':st_id,
+            'ad':ad_id,
+            'ao':ao_id,
+            'dsw':dsw_id
+            }
+        return val
+
+
 def role_type_key(user):
     info = User.objects.filter(username=user).values()
     user_id= info[0]['id']
@@ -222,6 +277,7 @@ def gender_type(user):
         role_val = Dropdown.objects.filter(key = role_).values()
         gender = role_val[0]['value']
         return gender
+
 
 def login_user(request):
     if request.method == "POST":
@@ -351,7 +407,9 @@ def list_faculty(request):
         user_id = user.id
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active=1).values()
         role_id = user_role[0]['role_id']
-        if role_id == 28:
+        det = Dropdown.objects.filter(key = "DSW").values()
+        dsw_id =det[0]['id']
+        if role_id == dsw_id:
             details =[]
             fac= User.objects.filter(is_staff =1).values()
             for item in fac:
@@ -445,7 +503,7 @@ def navbar(request):
         role_id  = role_det[0]['role_id']
         user_det = User.objects.filter(username = user).values()
         user_id = user_det[0]['id']
-        items = Navbar.objects.filter(role_id = role_id).values().order_by('position')
+        items = Navbar.objects.filter(role_id = role_id).filter(is_child =0).values().order_by('position')
         det = []
         for i in items:
             children = []
@@ -460,7 +518,8 @@ def navbar(request):
                         'id':item['id'],
                         'title':item['title'],
                         'icon':item['icon'],
-                        'state':item['link']
+                        'state':item['link'],
+                        
                         }
                     children.append(val)    
                 values = {
@@ -480,9 +539,6 @@ def navbar(request):
                     'child':children
                     }        
                 det.append(values)
-                
-                
-            
         return JsonResponse({"data":det},status =200)
     else:
         return JsonResponse({'error':'Invalid Method'},status =405)
@@ -507,7 +563,38 @@ def assign_roles(request):
             user_id = data.get('user_id')
             user_det = Faculty.objects.filter(user_id =user_id).values()
             gender = user_det[0]['gender']
-            print(gender)
+            details = Dropdown.objects.filter(value='role').values()
+            role_id = details[0]['id']
+            role_details = Dropdown.objects.filter(parent_id =role_id).values()
+            WS = role_details.filter(key = "W").values()
+            ws_id = WS[0]['id']
+            RS = role_details.filter(key = "R").values()
+            rs_id = RS[0]['id']
+            CRG = role_details.filter(key = "CRG").values()
+            crg_id  = CRG[0]['id']
+            WG =role_details.filter(key = "WG").values()
+            wg_id = WG[0]['id']
+            RG =role_details.filter(key = "RG").values()
+            rg_id = RG[0]['id']
+            WCV = role_details.filter(key = "WCV").values()
+            wcv_id = WCV[0]['id']
+            WCG = role_details.filter(key = "WCG").values()
+            wcg_id = WCG[0]['id']
+            RCG = role_details.filter(key = "RCG").values()
+            rcg_id = RCG[0]['id']
+            RCV = role_details.filter(key = "RCV").values()
+            rcv_id = RCV[0]['id']
+            CRB = role_details.filter(key = "CRB").values()
+            crb_id = CRB[0]['id']
+            print(role_id_fun())
+            
+            if gender == "M":
+                
+                if role_added==ws_id or rs_id or wg_id or rg_id or crg_id:
+                    return JsonResponse({"error":'Cannot assign these role to male'},status =400)
+            if gender == "F":
+                if role_added == wcv_id or wcg_id or rcv_id or rcg_id or crb_id:
+                    return JsonResponse({"error":'Cannot assign male role to female'},status =400)
             UserRole.objects.create(user_id = user_id , role_id =role_added)            
             return JsonResponse({'message':'Role added successfully'},status = 200)
         else:
@@ -526,20 +613,24 @@ def add_grievance(request):
         user =request.user
         if not user.is_authenticated:
             return JsonResponse({"error":"Unauthorized"},status =401)
-        user_det = User.objects.filter(username = user).values()
-        user_id = user_det[0]['id']
+        user_id = user.id
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active =1).values()
         user_role_ID = user_role[0]['id']
         rol = user_role[0]['role_id']
-        if rol == 24:
+        det = Dropdown.objects.filter(key = "S").values()
+        st_id =det[0]['id']
+        if rol == st_id:
                 title = request.POST['title']
                 if  title:
-                    if not bool(re.match(r"^[A-Za-z]{1}[A-Z a-z]{1,50}$",title)):
+                    if not bool(re.match(r"^[A-Za-z][A-Za-z 0-9\.\,\(\)\']{1,}$",title)):
                         return JsonResponse({'error':'Please enter a valid title'},status =400)
                 else:
                     return JsonResponse({'error':'Please enter a valid title'},status =400)
                 description = request.POST['description']
-                if not description:
+                if  description:
+                    if not bool(re.match(r"^^[A-Za-z][A-Za-z 0-9\.\,\(\)\']{1,}$",description)):
+                        return JsonResponse({'error':'Please enter a valid description'},status =400)
+                else:
                     return JsonResponse({'error':'Please enter a valid description'},status =400)
                 if len(request.FILES)!= 0:
                     image = request.FILES['image']
@@ -569,11 +660,65 @@ def list_grievance(request):
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active =1).values()
         role = user_role[0]['role_id']
         details =[]
-        
-        if role == 24:            
+        det = Dropdown.objects.filter(key = "S").values()
+        st_id =det[0]['id']
+        status_det =Dropdown.objects.filter(value ="Status").values()
+        status_id = status_det[0]['id']
+        stat = Dropdown.objects.filter(parent_id =status_id).values()
+        closed1 = stat.filter(key =2).values()
+        closed1_id =closed1[0]['id']
+        closed2 = stat.filter(key =6).values()
+        closed2_id =closed2[0]['id']
+        closed3 = stat.filter(key =10).values()
+        closed3_id =closed3[0]['id']
+        closed4 = stat.filter(key =14).values()
+        closed4_id =closed4[0]['id']
+        closed5 = stat.filter(key =18).values()
+        closed5_id =closed5[0]['id']
+        st_act1 = stat.filter(key =1).values()
+        st_act1_id=st_act1[0]['id']
+        st_act2 = stat.filter(key =5).values()
+        st_act2_id =st_act2[0]['id']
+        st_act3 = stat.filter(key =9).values()
+        st_act3_id =st_act3[0]['id']
+        st_act4 = stat.filter(key =13).values()
+        st_act4_id =st_act4[0]['id']
+        st_act5 = stat.filter(key =17).values()
+        st_act5_id =st_act5[0]['id']
+    
+        # ROLE ID 
+        detail= Dropdown.objects.filter(value='role').values()
+        role_id = detail[0]['id']
+        role_details = Dropdown.objects.filter(parent_id =role_id).values()
+            
+        RS = role_details.filter(key = "R").values()
+        rs_id = RS[0]['id']
+        CRG = role_details.filter(key = "CRG").values()
+        crg_id  = CRG[0]['id']
+        WS = role_details.filter(key = "W").values()
+        ws_id = WS[0]['id']
+        WG =role_details.filter(key = "WG").values()
+        wg_id = WG[0]['id']
+        RG =role_details.filter(key = "RG").values()
+        rg_id = RG[0]['id']
+        WCV = role_details.filter(key = "WCV").values()
+        wcv_id = WCV[0]['id']
+        WCG = role_details.filter(key = "WCG").values()
+        wcg_id = WCG[0]['id']
+        RCG = role_details.filter(key = "RCG").values()
+        rcg_id = RCG[0]['id']
+        RCV = role_details.filter(key = "RCV").values()
+        rcv_id = RCV[0]['id']
+        CRB = role_details.filter(key = "CRB").values()
+        crb_id = CRB[0]['id']
+        DSW = role_details.filter(key = "DSW").values()
+        dsw_id = DSW[0]['id']
+        AO = role_details.filter(key = "AO").values()
+        ao_id = AO[0]['id']
+        if role == st_id:
             if not GrievanceAdded.objects.filter(user_id = user_id).exists():
                 return JsonResponse({'data':details},status =200)
-            user_grievance = GrievanceAdded.objects.filter(user_id = user_id).values().exclude(Q(status_id =57)or Q(status_id =62)or Q(status_id =66)or Q(status_id =70)or Q(status_id =74) )
+            user_grievance = GrievanceAdded.objects.filter(user_id = user_id).values().exclude(Q(status_id =closed1_id)or Q(status_id =closed2_id)or Q(status_id =closed3_id)or Q(status_id =closed4_id)or Q(status_id =closed5_id) )
             for item in user_grievance:
                 date = item['date']
                 f_date = formatdate(date)
@@ -583,12 +728,16 @@ def list_grievance(request):
                 for i in manage:
                     statusID = i['status_id']
                     det = Dropdown.objects.filter(id=statusID).values()
-                    if statusID ==56 or statusID ==61 or statusID==65 or statusID==69 or statusID==73:
+                    if statusID ==st_act1_id or statusID==st_act2_id or statusID== st_act3_id or statusID==st_act4_id or statusID==st_act5_id:
                         active = True
                     else:
                         active = False
                     vali = det[0]['value']
                     status.append(vali)
+                    if statusID ==st_act5_id:
+                        final_status = 1
+                    else:
+                        final_status=0
                     
                 val = {
                     'id':id,
@@ -598,11 +747,12 @@ def list_grievance(request):
                     'image':item['images'],
                     'status':status,
                     'active':active,
-                    'message':i['reason']
-                }
+                    'message':i['reason'],
+                    'final_status':final_status
+                    }
                 details.append(val)
             return JsonResponse({'data':details},status =200)
-        elif role == 25:
+        elif role == ws_id:
             user_hostel = Student.objects.filter(hostel_name ="SJ").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -611,7 +761,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =58)
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =57)
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -644,7 +794,8 @@ def list_grievance(request):
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         
-        elif role == 43:
+        elif role == wg_id:
+            detail =[]
             user_hostel = Student.objects.filter(hostel_name ="GG").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -653,7 +804,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =58)
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =57)
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -687,7 +838,7 @@ def list_grievance(request):
                     details.append(val)
                     # increase_variable_after_working_hours.delay(new_data.id)
             return JsonResponse({'data':details},status=200)
-        elif role == 44:
+        elif role == wcg_id:
             user_hostel = Student.objects.filter(hostel_name ="CG").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -696,7 +847,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =58)
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =57)
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -728,7 +879,7 @@ def list_grievance(request):
                         val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role == 45:
+        elif role == wcv_id:
             user_hostel = Student.objects.filter(hostel_name ="CV").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -737,7 +888,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =58)
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values().exclude(status_id =57)
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -769,7 +920,8 @@ def list_grievance(request):
                         val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role ==23:
+        
+        elif role ==ao_id:
             user_hostel = Student.objects.all().values()    
             for items in user_hostel:
                 print(items)
@@ -812,7 +964,7 @@ def list_grievance(request):
                         return JsonResponse({"data":'No Pending Grievance'},status =200)
                     
             return JsonResponse({'data':details},status=200)
-        elif role ==28:
+        elif role ==dsw_id:
             user_hostel = Student.objects.all().values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -821,7 +973,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =71).order_by('status_id').values()
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(Q(status_id =71) | Q(status_id =58)).order_by('status_id').values()
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -853,7 +1005,7 @@ def list_grievance(request):
                         val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role==47:
+        elif role==rs_id:
             user_hostel = Student.objects.filter(hostel_name ="SJ").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -889,7 +1041,7 @@ def list_grievance(request):
                     
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role ==46:
+        elif role ==rg_id:
             user_hostel = Student.objects.filter(hostel_name ="GG").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -926,7 +1078,7 @@ def list_grievance(request):
                     details.append(val)
                     # increase_variable_after_working_hours.delay(new_data.id)
             return JsonResponse({'data':details},status=200)
-        elif role ==48:
+        elif role ==rcg_id:
             user_hostel = Student.objects.filter(hostel_name ="CG").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -961,7 +1113,7 @@ def list_grievance(request):
                     
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role==49:
+        elif role==rcv_id:
             user_hostel = Student.objects.filter(hostel_name ="CV").values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -991,11 +1143,12 @@ def list_grievance(request):
                     'image':i['images'],
                     'room_number':st_room,
                     'name':f_name+" "+l_name,
-                    'status':f_stat,                    
+                    'status':f_stat,   
+                    # ''                 
                     }
                     details.append(val)
             return JsonResponse({'data':details},status=200)
-        elif role == 27:
+        elif role == crg_id:
             user_hostel = Student.objects.filter(Q(hostel_name="GG") | Q(hostel_name="SJ")).values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1004,7 +1157,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =67).order_by('status_id').values()
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(Q(status_id =67) | Q(status_id =58)).order_by('status_id').values()
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -1029,7 +1182,7 @@ def list_grievance(request):
                     }
                     
             return JsonResponse({'data':details},status=200)
-        elif role ==53:
+        elif role ==crb_id:
             user_hostel = Student.objects.filter(Q(hostel_name="CG") | Q(hostel_name="CV")).values()            
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1038,7 +1191,7 @@ def list_grievance(request):
                 l_name =user_d[0]['last_name']
                 st_room = items['room_number']
                 
-                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =67).order_by('status_id').values()
+                st_gr = GrievanceAdded.objects.filter(user_id = st_id).filter(Q(status_id =67) | Q(status_id =58)).order_by('status_id').values()
                 if not st_gr.exists():
                     return JsonResponse({"data":details},status =200)
                 for i in st_gr:
@@ -1106,8 +1259,6 @@ def approve_grievance(request):
             status = status_det[0]['id']
             ManageGrievance.objects.create(grievance_id = grievance_id,status_id =status,user_role_id =id)
             GrievanceAdded.objects.filter(id = grievance_id).update(status_id =status)
-            ManageGrievance.objects.create(grievance_id = grievance_id,status_id =71,user_role_id =id)
-            GrievanceAdded.objects.filter(id = grievance_id).update(status_id =71)
             return JsonResponse({"message":'Grievance forwarded to Admin officer successfully!'},status =200)
         elif role ==28:
             user_ = UserRole.objects.filter(user_id =user_id).filter(role_id = role).values()
@@ -1124,7 +1275,7 @@ def approve_grievance(request):
             status = status_det[0]['id']
             user_ = UserRole.objects.filter(user_id =user_id).filter(role_id = role).values()
             id = user_[0]['id']
-            ManageGrievance.objects.create(grievance_id = grievance_id,status_id =status,user_role_id =id)
+            ManageGrievance.objects.create(grievance_id = grievance_id,status_id =status,user_role_id =id,is_closed =1)
             GrievanceAdded.objects.filter(id = grievance_id).update(status_id =status)
             return JsonResponse({"message":'Grievance closed successfully'},status=200)
 
@@ -1149,7 +1300,7 @@ def reject_grievance(request):
                 return JsonResponse({'error':'Please enter valid grievance id'},status =400)
             reason = data.get('message')
             if reason is not None:
-                if not bool(re.match(r"^[A-Za-z]{1}[A-Z a-z]{1,50}$",reason)):
+                if not bool(re.match(r"^[A-Za-z][A-Za-z 0-9\.\,\(\)\']{1,}$",reason)):
                     return JsonResponse({'error':'Please enter a valid reason'},status =400)
             else:
                 return JsonResponse({'error':'Please enter a valid reason'},status =400)
@@ -1168,12 +1319,27 @@ def reject_grievance(request):
                 return JsonResponse({'error':'Please enter valid grievance id'},status =400)
             reason = data.get('message')
             if reason is not None:
-                if not bool(re.match(r"^[A-Za-z]{1}[A-Z a-z]{1,50}$",reason)):
+                if not bool(re.match(r"^[A-Za-z][A-Za-z 0-9\.\,\(\)\']{1,}$",reason)):
                     return JsonResponse({'error':'Please enter a valid reason'},status =400)
             else:
                 return JsonResponse({'error':'Please enter a valid reason'},status =400)
-            status_det = Dropdown.objects.filter(key =3).values()
-            status = status_det[0]['id']
+            gr_det = GrievanceAdded.objects.filter(grievance_id = grievance_id).values()
+            gr_status = gr_det[0]['status_id']
+            if gr_status ==57:
+                status_det = Dropdown.objects.filter(key =3).values()
+                status = status_det[0]['id']
+            elif gr_status== 61:
+                status_det = Dropdown.objects.filter(key =7).values()
+                status = status_det[0]['id']
+            elif gr_status ==65:
+                status_det = Dropdown.objects.filter(key =11).values()
+                status = status_det[0]['id']
+            elif gr_status ==69:
+                status_det = Dropdown.objects.filter(key =15).values()
+                status = status_det[0]['id']
+            elif gr_status==73:
+                status_det = Dropdown.objects.filter(key =19).values()
+                status = status_det[0]['id']
             user_ = UserRole.objects.filter(user_id =user_id).filter(role_id = role).values()
             id = user_[0]['id']
             ManageGrievance.objects.create(grievance_id = grievance_id,status_id =status,user_role_id =id,reason = reason)
@@ -1233,7 +1399,8 @@ def all_grievance(request):
         role = user_role[0]['role_id']
         details =[]
         if role ==47 or role == 25:
-            user_hostel = Student.objects.filter(hostel_name ="SJ").values()            
+            user_hostel = Student.objects.filter(hostel_name ="SJ").values()        
+            count=1    
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1248,10 +1415,10 @@ def all_grievance(request):
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
                     stat = det['status_id']
-
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                    'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1263,11 +1430,13 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count=count+1
                     val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==43 or role == 46:
-            user_hostel = Student.objects.filter(hostel_name ="GG").values()            
+            user_hostel = Student.objects.filter(hostel_name ="GG").values()    
+            count=1        
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1285,6 +1454,7 @@ def all_grievance(request):
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                    'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1296,11 +1466,13 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count =count+1
                     val['message']  = message
                     details.append(val)
                     return JsonResponse({'data':details},status=200)
         elif role ==44 or role == 48:
-            user_hostel = Student.objects.filter(hostel_name ="CG").values()            
+            user_hostel = Student.objects.filter(hostel_name ="CG").values()    
+            count=1        
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1315,10 +1487,10 @@ def all_grievance(request):
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
                     stat = det['status_id']
-
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                    'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1330,11 +1502,13 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count= count+1
                     val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==45 or role == 49:
-            user_hostel = Student.objects.filter(hostel_name ="CV").values()            
+            user_hostel = Student.objects.filter(hostel_name ="CV").values()    
+            count=1        
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1354,6 +1528,7 @@ def all_grievance(request):
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                        'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1365,11 +1540,13 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count=count+1
                     val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==27:
-            user_hostel = Student.objects.filter(Q(hostel_name="GG") | Q(hostel_name="SJ")).values()            
+            user_hostel = Student.objects.filter(Q(hostel_name="GG") | Q(hostel_name="SJ")).values()    
+            count=1        
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1388,6 +1565,7 @@ def all_grievance(request):
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                        'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1399,11 +1577,13 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count=count+1
                     val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==53:
-            user_hostel = Student.objects.filter(Q(hostel_name="CG") | Q(hostel_name="CV")).values()            
+            user_hostel = Student.objects.filter(Q(hostel_name="CG") | Q(hostel_name="CV")).values()     
+            count=1       
             for items in user_hostel:
                 st_id =items['user_id']
                 user_d = User.objects.filter(id= st_id).values()
@@ -1418,10 +1598,10 @@ def all_grievance(request):
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
                     stat = det['status_id']
-
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                        'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1433,13 +1613,17 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count=count+1
                     val['message']  = message
                     details.append(val)
             return JsonResponse({'data':details},status=200)
         elif role ==29 or role ==23 or role ==28:
-            user_hostel = Student.objects.all().values()
-            for items in user_hostel:
+            deta=[]
+            user_host = Student.objects.all().values()
+            count=1
+            for items in user_host:
                 st_id =items['user_id']
+                print(st_id)
                 user_d = User.objects.filter(id= st_id).values()
                 f_name = user_d[0]['first_name']
                 l_name =user_d[0]['last_name']
@@ -1447,7 +1631,7 @@ def all_grievance(request):
                 hostel = items['hostel_name']
                 st_gr = GrievanceAdded.objects.filter(user_id = st_id).order_by('status_id').values()
                 if not st_gr.exists():
-                    return JsonResponse({"data":details},status =200)
+                    return JsonResponse({"data":deta},status =200)
                 for i in st_gr:
                     id = i['id']
                     det = ManageGrievance.objects.filter(grievance_id = id).order_by('-id').values().first()
@@ -1455,6 +1639,7 @@ def all_grievance(request):
                     date = i['date']
                     f_date = formatdate(date)
                     val = {
+                    'sno':count,
                     'id':i['id'],
                     'title': i['title'],
                     'date':f_date,
@@ -1466,9 +1651,11 @@ def all_grievance(request):
                         message = "Closed"
                     else:
                         message = "Pending"
+                    count =count+1
+                    
                     val['message']  = message
-                    details.append(val)
-            return JsonResponse({'data':details},status=200)
+                    deta.append(val)
+            return JsonResponse({'data':deta},status=200)
         elif role ==24:
             return JsonResponse({'message':details},status =200)
         else:
@@ -1486,11 +1673,12 @@ def stats(request):
         user_id = user.id
         user_role = UserRole.objects.filter(user_id = user_id).filter(is_active =1).values()
         role = user_role[0]['role_id']
-        print(role)
         details =[]
         chart_det=[]
         key=[]
         values=[]
+        cat=[]
+        cnt=[]
         if role ==25 or role ==47:
             count_total=0
             count_pending =0
@@ -1507,34 +1695,46 @@ def stats(request):
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
                 count_registered = reg_grievance+count_registered
-                # category wise
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                #chart-date
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('date').distinct()
-                print(st_gri)
-                    
+                # DATE WISE
+                # date_data = GrievanceAdded.objects.filter(user_id =st_id).
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(hostel_name="SJ")
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+                ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+
+
+            return JsonResponse({ "data":details,"donut": data})
         if role ==43 or role ==46:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             user_hostel = Student.objects.filter(hostel_name ="GG").values()
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1545,32 +1745,44 @@ def stats(request):
                 closed_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =58).count()
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
-                count_registered = reg_grievance+count_registered
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                
-                    
+                count_registered = reg_grievance+count_registered    
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(hostel_name="GG")
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+                ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+
+            return JsonResponse({ "data":details,"donut": data})
         if role ==44 or role ==48:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             user_hostel = Student.objects.filter(hostel_name ="CG").values()
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1582,14 +1794,6 @@ def stats(request):
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
                 count_registered = reg_grievance+count_registered
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
                 
                     
                 val={
@@ -1598,15 +1802,41 @@ def stats(request):
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
+            
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(hostel_name="CG")
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+                ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+
+            return JsonResponse({ "data":details,"donut": data})
+
+    
+
         if role == 45 or role ==49:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             user_hostel = Student.objects.filter(hostel_name ="CV").values()
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1618,31 +1848,43 @@ def stats(request):
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
                 count_registered = reg_grievance+count_registered
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                
-                    
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(hostel_name="CV")
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                    {"category": category, "grievance_count": count}
+                    for category, count in category_counts.items()
+                    ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+
+            return JsonResponse({ "data":details,"donut": data})
         if role ==24:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             st_gr = GrievanceAdded.objects.filter(user_id = user_id).count()
             count_total = count_total+st_gr
             pending_grievance = GrievanceAdded.objects.filter(user_id = user_id).exclude(status_id =58).count()
@@ -1651,31 +1893,22 @@ def stats(request):
             count_closed = count_closed+closed_grievance
             reg_grievance = GrievanceAdded.objects.filter(user_id = user_id).filter(status_id =55).count()
             count_registered = reg_grievance+count_registered
-            st_gri = GrievanceAdded.objects.filter(user_id = user_id).values('category_id').distinct()
-            for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = user_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                
-                    
             val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+
+            return JsonResponse({"data":details},status=200)
         if role==27:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             user_hostel = Student.objects.filter(Q(hostel_name="GG") | Q(hostel_name="SJ")).values()
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1686,32 +1919,45 @@ def stats(request):
                 closed_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =58).count()
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
-                count_registered = reg_grievance+count_registered
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                
-                    
+                count_registered = reg_grievance+count_registered                
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
+
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(Q(hostel_name="GG") | Q(hostel_name="SJ"))
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+                ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+
+            return JsonResponse({ "data":details,"donut": data})
         elif role ==53:
             count_total=0
             count_pending =0
             count_closed=0
             count_registered =0
+            cat=[]
+            cnt=[]
             user_hostel = Student.objects.filter(Q(hostel_name="CG") | Q(hostel_name="CV")).values()
             for items in user_hostel:
                 st_id =items['user_id']
@@ -1723,26 +1969,43 @@ def stats(request):
                 count_closed = count_closed+closed_grievance
                 reg_grievance = GrievanceAdded.objects.filter(user_id = st_id).filter(status_id =55).count()
                 count_registered = reg_grievance+count_registered
-                st_gri = GrievanceAdded.objects.filter(user_id = st_id).values('category_id').distinct()
-                for items in st_gri:
-                    id = items['category_id']
-                    st_gri = GrievanceAdded.objects.filter(user_id = st_id).filter(category_id =id).count()
-                    det= Dropdown.objects.filter(id=id).values()
-                    value = det[0]['value']
-                    key.append(value)
-                    values.append(st_gri)
-                
-                    
+                # DATE WISE
+                dates =[]
+                date_data = GrievanceAdded.objects.filter(user_id=st_id).values()
+                for i in date_data:
+                        date =i['date']
+                        f_date = date.strftime("%Y-%m-%d")
+                        dates.append(f_date)
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            students_in_hostel = Student.objects.filter(Q(hostel_name="CG") | Q(hostel_name="CV"))
+            user_ids = students_in_hostel.values_list('user_id', flat=True)
+            grievances = GrievanceAdded.objects.filter(user_id__in=user_ids).select_related('category')
+            category_counts = {}
+            
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+    ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+            return JsonResponse({ "data":details,"donut": data,"dates":dates},status= 200)
         elif role ==23 or role ==29 or role==28:
             count_total=0
             count_pending =0
@@ -1767,23 +2030,45 @@ def stats(request):
                     value = det[0]['value']
                     key.append(value)
                     values.append(st_gri)
-                
-                    
+                    # DATE WISE
+                    dates =[]
+                    date_data = GrievanceAdded.objects.all().values()
+                    for i in date_data:
+                        date =i['date']
+                        f_date = date.strftime("%Y-%m-%d")
+                        dates.append(f_date)                    
                 val={
                     'total':count_total,
                     'pending':count_pending,
                     'closed':count_closed,
                     'registered':count_registered
                 }
-            chart_det.append(key)
-            chart_det.append(values)
+
             details.append(val)
-            return JsonResponse({"data":details,"donut":chart_det},status=200)
+            grievances = GrievanceAdded.objects.all()
+
+            category_counts = {}
+            cat =[]
+            cnt =[]
+            for grievance in grievances:
+                category_name = grievance.category.value if grievance.category else "Uncategorized"
+                if category_name in category_counts:
+                    category_counts[category_name] += 1
+                else:
+                    category_counts[category_name] = 1
+            response_data = [
+                
+                {"category": category, "grievance_count": count}
+                for category, count in category_counts.items()
+                ]
+            for item in response_data:
+                cat.append(item['category'])
+                cnt.append(item['grievance_count'])
+            data ={
+                'category':cat,
+                'count':cnt
+            }
+            return JsonResponse({"data":details,"donut":data,"dates":dates},status=200)
     else:
         return JsonResponse({"error":"Invalid Method"},status = 405)
     
-def list_roles_faculty(request):
-    if request.method == "GET":
-        pass
-    else:
-        return JsonResponse({"error":'Invalid Method'},status =405)

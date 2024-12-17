@@ -24,11 +24,11 @@ SECRET_KEY = 'django-insecure-k0lr#=y#mskaa@wq7&pt218pax$a2bz_mr$0dmh4(ddq59)b%8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ALLOW_HEADERS= ['hideloader','content-type']
 
 CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
-
 SESSION_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-     "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
