@@ -337,6 +337,25 @@ def list_items_dropdown(request):
     else:
         return JsonResponse({'error':"Method not allowed"},status = 405)
     
+    
+    # SEPArater
+def check_access(request):
+    if request.method =="GET":
+        role = request.GET.get('role')
+        # roles =int(role)
+        user = request.user
+        id= user.id
+        details =UserRole.objects.filter(user_id = id).filter(is_deleted = 0).filter(is_active=1)
+        if not details.exists():
+            return JsonResponse({"error":'No data exists for user'},status =400)
+        roles_det = details.values('role_id')
+        ROLE =roles_det[0]['role_id']
+        if role == ROLE:
+            return JsonResponse({"message":"DONE"},status =200)
+        else:
+            return JsonResponse({"error":"You are not allowed to access this page"},status =401)
+    else:
+        return JsonResponse({"error":"INVALID METHOD"},status =405)
 def profile_det(request):
     if request.method=="GET":
         user = request.user

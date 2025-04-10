@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+from .secrets import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +20,7 @@ import os
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k0lr#=y#mskaa@wq7&pt218pax$a2bz_mr$0dmh4(ddq59)b%8'
+SECRET_KEY =SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,12 +84,12 @@ WSGI_APPLICATION = 'campus_care_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "Campuscare_db",
-        "USER": "root",
-        "PASSWORD": "Nandini@2005",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "ENGINE": ENGINE,
+        "NAME": NAME,
+        "USER":USER,
+        "PASSWORD": PASSWORD,
+        "HOST": HOST,
+        "PORT":PORT,
     }
 }
 
@@ -124,12 +124,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0' 
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_TIMEZONE = 'Asia/Kolkata'
-
+CELERY_BROKER_URL = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = CELERY_ACCEPT_CONTENT
+CELERY_TASK_SERIALIZER = CELERY_TASK_SERIALIZER
+CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND
+CELERY_TIMEZONE = CELERY_TIMEZONE
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

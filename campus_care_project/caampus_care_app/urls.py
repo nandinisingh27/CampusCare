@@ -23,7 +23,7 @@ urlpatterns = [
     path('grievance_history/',views.grievance_history),
     path('all_grievance/',views.all_grievance),
     path('stats/',views.stats),
-    
+    path('check/',views.check_access)
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
